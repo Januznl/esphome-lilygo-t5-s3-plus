@@ -87,3 +87,11 @@ The LilyGo does not need to be connected to the Home-Assistant server directly.
 * When its done click on `REST` and it should boot your firmware.
 * Click on `Logs` to see if its working correctly.
 
+#### Next firmware flashes
+Since the board is now connected to ESPHome, you can update your firmware by using OTA (updates over-the-air)
+
+* In the Home-Assistant menu click on ESPHome.
+* Click on the 3 dots next to `Logs` on your new device `basic-clock`
+* Click on `Install`
+* Click on `Wirelessly` and your device will be updated over wifi.
+
