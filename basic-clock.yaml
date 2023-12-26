@@ -1,0 +1,151 @@
+esphome:
+  name: liligo-t5-47-epaper-plus
+  platformio_options:
+    # Include https://github.com/Xinyuan-LilyGO/LilyGo-EPD47/blob/master/platformio/boards/lilygo-t5-47-plus.json as custom board
+    board: lilygo-t5-47-plus
+    # Directory where the lilygo-t5-47-plus.json file can be found
+    board_dir: boards
+  on_boot:
+    priority: -100
+    then:
+      - pcf8563.read_time
+  # custom build path, so we can save the lilygo-t5-47-plus.json file in the sub-folder "boards"
+  build_path: /config/esphome/.esphome/basic-clock/
+
+esp32:
+  variant: esp32s3
+  board: lilygo-t5-47-plus
+
+  framework:
+    type: arduino
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API (API password is deprecated in favor of encryption key)
+# https://esphome.io/components/api.html
+api:
+  encryption:
+    key: "REPLACE_ME"
+
+ota:
+  password: "REPLACE_ME"
+
+wifi:
+  networks:
+    - ssid: !secret wifi_ssid
+      password: !secret wifi_password
+  reboot_timeout: 15min
+  
+  # Set the correct IP address on which your home assistant server is running
+  use_address: REPLACE_ME
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "Lilygo-T5-Eink Fallback Hotspot"
+    password: "REPLACE_ME"
+
+captive_portal:
+
+external_components:
+  # https://github.com/nickolay/esphome-lilygo-t547plus
+  - source: github://nickolay/esphome-lilygo-t547plus
+    components: ["t547"]
+  # https://github.com/kaeltis/esphome-lilygo-t547plus
+  - source: github://kaeltis/esphome-lilygo-t547plus
+    components: ["lilygo_t5_47_battery"]
+
+#deep_sleep:
+#  run_duration: 30s
+#  sleep_duration: 1min
+
+i2c:
+  - id: bus_a
+    sda: GPIO18
+    scl: GPIO17
+    frequency: 100khz
+    # There are some problems with i2c scan, so turn scan off if problems appear on your board
+    scan: False
+
+time:
+  - platform: pcf8563
+    id: internal_clock
+    address: 0x51  
+    i2c_id: bus_a
+  - platform: homeassistant
+    id: ha_time
+    on_time_sync:
+      then:
+        - pcf8563.write_time
+
+binary_sensor:
+  - platform: gpio
+    pin: 
+      number: GPIO21 #was GPIO39 on the previous board
+      inverted: true
+    name: "Button 1"
+    on_press:
+      - logger.log: PhysButton Pressed
+
+
+sensor:
+  - platform: lilygo_t5_47_battery
+    id: battery_voltage
+    voltage:
+      name: "Battery Voltage"
+
+  - platform: template
+    name: "Battery Percentage"
+    id: battery_percentage
+    lambda: |-
+      // tweak values in mapping for calibration
+      // 4.1 = max voltage
+      // 3.3 = min voltage
+      float y = (id(battery_voltage).voltage->state - 3.3) * 100.0 / (4.1 - 3.3);
+      if (y < 100.0) { return y; } else { return 100.0; };
+
+
+font:
+  # https://github.com/hprobotic/Google-Sans-Font/blob/master/
+  - file: fonts/GoogleSans-Bold.ttf
+    id: font_1
+    size: 45
+  - file: fonts/GoogleSans-Bold.ttf
+    id: font_2
+    size: 150
+  - file: "fonts/GoogleSans-Bold.ttf"
+    id: font_clock
+    size: 300
+    glyphs: [':', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
+
+interval:
+  - interval: 10s
+    then:
+      - if:
+          condition:
+            wifi.connected:
+          then:
+            - switch.turn_on: vk5
+          else:
+            - switch.turn_off: vk5
+switch:
+  - platform: template
+    name: "Wifi font"
+    id: vk5
+    optimistic: true
+
+image:
+  - file: https://esphome.io/_images/logo.png
+    id: esphome_logo
+    resize: 200x162
+
+display:
+- platform: t547
+  update_interval: 60s
+  lambda: |-
+    it.printf(10, 2, id(font_1), TextAlign::TOP_LEFT, "%s", id(vk5).state ? "Wifi: Online" : "Wifi: Offline");
+    it.printf(10, 50, id(font_1), "Battery: %.1f%% (%.1fV)", id(battery_percentage).state, id(battery_voltage).voltage->state);
+    
+    it.image(it.get_width(), 0, id(esphome_logo), ImageAlign::TOP_RIGHT);
+    
+    it.strftime(it.get_width()/2, it.get_height()/2-150, id(font_clock), TextAlign::TOP_CENTER, "%H:%M", id(ha_time).now());
