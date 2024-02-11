@@ -245,24 +245,32 @@ font:
       - "\U000F0079" # mdi-battery-100
 
   - file: "fonts/materialdesignicons-webfont.ttf"
-    id: font_icons_large
+    id: font_wheater_icon_large
     size: 200
     glyphs:
-      - "\U000F0599" # mdi-weather-sunny (clear)
-      - "\U000F0595" # mdi-weather-partly-cloudy (partlycloudy)
-      - "\U000F0590" # mdi-weather-cloudy (cloudy)
-      - "\U000F0591" # mdi-weather-fog (partlycloudy-fog)
-      - "\U000F0F33" # mdi-weather-partly-rainy (partlycloudy-light-rain)
-      - "\U000F0F32" # mdi-weather-partly-lightning (partlycloudy-rain)
-      - "\U000F0597" # mdi-weather-rainy (light-rain)
-      - "\U000F0596" # mdi-weather-pouring (rainy)
-      - "\U000F067F" # mdi-weather-snowy-rainy (snowy-rainy)
-      - "\U000F0F35" # mdi-weather-partly-snowy-rainy (partlycloudy-light-snow)
-      - "\U000F0F34" # mdi-weather-partly-snowy (partlycloudy-snow)
-      - "\U000F0598" # mdi-weather-snowy (light-snow)
-      - "\U000F0F36" # mdi-weather-snowy-heavy (snowy)
-      - "\U000F067E" # mdi-weather-lightning-rainy (partlycloudy-lightning)
-      - "\U000F0593" # mdi-weather-lightning (lightning)
+      - "\U000F0590"
+      - "\U000F0591"
+      - "\U000F0592"
+      - "\U000F0593"
+      - "\U000F0594"
+      - "\U000F0595"
+      - "\U000F0596"
+      - "\U000F0597"
+      - "\U000F0598"
+      - "\U000F0599"
+      - "\U000F0F31"
+      - "\U000F0F32"
+      - "\U000F0F33"
+      - "\U000F0F34"
+      - "\U000F0F35"
+      - "\U000F0F36"
+      - "\U000F0F38"
+      - "\U000F067E"
+      - "\U000F067F"
+      - "\U000F059D"
+      - "\U000F059E"
+      - "\U000F1522"
+
 
 interval:
   - interval: 10s
@@ -351,39 +359,8 @@ display:
     //it.printf(550, 110, id(font_title), TextAlign::TOP_LEFT, "%.2f% km/h", id(buienradar_wind_speed).state); 
     
     // Icoon
-    //if (id(br_condition).state == "rainy") {
-    it.printf(waether_icon_x, waether_icon_y, id(font_icons_large), TextAlign::BASELINE_RIGHT, "\U000F0596");
-    //}         
-
-    //if (id(br_condition).state == "clear") {
-    //  it.printf(xres-x_pad, y_header_weer+150, id(font_icons_large), TextAlign::BASELINE_RIGHT, "\U000F0599");}
-    //if (id(br_condition).state == "partlycloudy") {
-    //  it.printf(xres-x_pad, y_header_weer+150, id(font_icons_large), TextAlign::BASELINE_RIGHT, "\U000F0595");}
-    //if (id(br_condition).state == "cloudy") {
-    //  it.printf(xres-x_pad, y_header_weer+150, id(font_icons_large), TextAlign::BASELINE_RIGHT, "\U000F0590");}
-    //if (id(br_condition).state == "partlycloudy-fog") {
-    //  it.printf(xres-x_pad, y_header_weer+150, id(font_icons_large), TextAlign::BASELINE_RIGHT, "\U000F0591");}
-    //if (id(br_condition).state == "partlycloudy-light-rain") {
-    //  it.printf(xres-x_pad, y_header_weer+150, id(font_icons_large), TextAlign::BASELINE_RIGHT, "\U000F0F33");}
-    //if (id(br_condition).state == "partlycloudy-rain") {
-    //  it.printf(xres-x_pad, y_header_weer+150, id(font_icons_large), TextAlign::BASELINE_RIGHT, "\U000F0F32");}
-    //if (id(br_condition).state == "light-rain") {
-    //  it.printf(xres-x_pad, y_header_weer+150, id(font_icons_large), TextAlign::BASELINE_RIGHT, "\U000F0597");}
-    //if (id(br_condition).state == "snowy-rainy") {
-    //  it.printf(xres-x_pad, y_header_weer+150, id(font_icons_large), TextAlign::BASELINE_RIGHT, "\U000F067F");}
-    //if (id(br_condition).state == "partlycloudy-light-snow") {
-    //  it.printf(xres-x_pad, y_header_weer+150, id(font_icons_large), TextAlign::BASELINE_RIGHT, "\U000F0F35");}
-    //if (id(br_condition).state == "partlycloudy-snow") {
-    //  it.printf(xres-x_pad, y_header_weer+150, id(font_icons_large), TextAlign::BASELINE_RIGHT, "\U000F0F34");}
-    //if (id(br_condition).state == "light-snow") {
-    //  it.printf(xres-x_pad, y_header_weer+150, id(font_icons_large), TextAlign::BASELINE_RIGHT, "\U000F0598");}   
-    //if (id(br_condition).state == "snowy") {
-    //  it.printf(xres-x_pad, y_header_weer+150, id(font_icons_large), TextAlign::BASELINE_RIGHT, "\U000F0F36");} 
-    //if (id(br_condition).state == "partlycloudy-lightning") {
-    //  it.printf(xres-x_pad, y_header_weer+150, id(font_icons_large), TextAlign::BASELINE_RIGHT, "\U000F067E");}
-    //if (id(br_condition).state == "lightning") {
-    //  it.printf(xres-x_pad, y_header_weer+150, id(font_icons_large), TextAlign::BASELINE_RIGHT, "\U000F0593");
-    //}    
+    auto weatherIcon = conditionToIconBuienRadar(id(br_condition).state);
+    it.printf(waether_icon_x, waether_icon_y, id(font_wheater_icon_large), TextAlign::BASELINE_RIGHT, weatherIcon.c_str());
 
 
     it.filled_rectangle(10, it.get_height()-60, it.get_width()-40, 2);
