@@ -326,15 +326,6 @@ display:
   update_interval: 300s
   id: t5_display
   lambda: |-
-    #define waether_icon_x 930 
-    #define waether_icon_y 220 
-
-    auto battIcon = batteryToIcon(id(battery_percentage).state);
-    it.printf(it.get_width()-70, 0, id(font_icons_small), TextAlign::TOP_RIGHT, battIcon.c_str()); 
-
-    auto wifiIcon = wifiToIcon(id(wifi_signal_percent).state);
-    it.printf(it.get_width()-20, 0, id(font_icons_small), TextAlign::TOP_RIGHT, "%s", wifiIcon.c_str());
-
     it.print(10, 10, id(font_title), "Upstairs");
     it.printf(20,  10 + 70, id(font_normal), TextAlign::TOP_LEFT, "Office"); 
     it.printf(245, 10 + 75, id(font_icons_text), TextAlign::TOP_LEFT, "\U000F050F"); 
@@ -387,28 +378,36 @@ display:
     //it.filled_rectangle(120, 100, it.get_width()-260, 3);
 
     // weather screen
+
     it.filled_rectangle(500, 300, 950, 3);
 
     // Text
-    it.printf(530, 75, id(font_icons_title), TextAlign::TOP_LEFT, "\U000F050F"); 
-    it.printf(580, 70, id(font_title), TextAlign::TOP_LEFT, "%.1f°C", id(buienradar_temp).state); 
+    it.printf(530, (20+5), id(font_icons_title), TextAlign::TOP_LEFT, "\U000F050F"); 
+    it.printf(580, 20, id(font_title), TextAlign::TOP_LEFT, "%.1f°C", id(buienradar_temp).state); 
 
-    it.printf(530, 120, id(font_icons_title), TextAlign::TOP_LEFT, "\U000F058E"); 
-    it.printf(580, 115, id(font_title), TextAlign::TOP_LEFT, "%.0f%%", id(buienradar_hum).state); 
+    it.printf(530, (70+5), id(font_icons_title), TextAlign::TOP_LEFT, "\U000F058E"); 
+    it.printf(580, 70, id(font_title), TextAlign::TOP_LEFT, "%.0f%%", id(buienradar_hum).state); 
 
-    it.printf(530, 165, id(font_icons_title), TextAlign::TOP_LEFT, "\U000F054B"); 
-    it.printf(580, 160, id(font_title), TextAlign::TOP_LEFT, "%.0f% mm", id(buienradar_rain_24h).state); 
+    it.printf(530, (130+5), id(font_icons_title), TextAlign::TOP_LEFT, "\U000F054B"); 
+    it.printf(580, 130, id(font_title), TextAlign::TOP_LEFT, "%.0f% mm", id(buienradar_rain_24h).state); 
 
-    it.printf(540, 240, id(font_icons_text), TextAlign::TOP_LEFT, "\U000F059D"); 
-    it.printf(580, 240, id(font_normal), TextAlign::TOP_LEFT, "%.2f% km/h (%s)", id(buienradar_wind_speed).state, id(buienradar_wind_direction).state.c_str()); 
+    it.printf(540, (190+5), id(font_icons_text), TextAlign::TOP_LEFT, "\U000F059D"); 
+    it.printf(580, 190, id(font_normal), TextAlign::TOP_LEFT, "%.2f% km/h (%s)", id(buienradar_wind_speed).state, id(buienradar_wind_direction).state.c_str()); 
     
-    
-
     // Icoon
     auto dayTime = id(hasun).state == "above_horizon";
     auto weatherIcon = conditionToIconBuienRadar(id(br_condition).state, dayTime);
-    it.printf(waether_icon_x, waether_icon_y, id(font_wheater_icon_large), TextAlign::BASELINE_RIGHT, weatherIcon.c_str());
+    it.printf(it.get_width()-10, 10, id(font_wheater_icon_large), TextAlign::TOP_RIGHT, weatherIcon.c_str());
 
-
+    // Status Bar
     it.filled_rectangle(10, it.get_height()-60, it.get_width()-40, 2);
+    
+    // Last update
     it.strftime(10, it.get_height()-10, id(font_small), TextAlign::BOTTOM_LEFT, "Last update: %A %d-%m-%Y %H:%M", id(ha_time).now());
+
+    // Status Icons
+    auto battIcon = batteryToIcon(id(battery_percentage).state);
+    it.printf(it.get_width()-70, it.get_height(), id(font_icons_small), TextAlign::BOTTOM_RIGHT, battIcon.c_str()); 
+
+    auto wifiIcon = wifiToIcon(id(wifi_signal_percent).state);
+    it.printf(it.get_width()-20, it.get_height(), id(font_icons_small), TextAlign::BOTTOM_RIGHT, "%s", wifiIcon.c_str());
