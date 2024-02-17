@@ -10,7 +10,6 @@
 #define ICON_w_hail "\U000F0592"
 #define ICON_w_lightning "\U000F0593"
 #define ICON_w_lightning_rainy "\U000F067E"
-#define ICON_w_night_partly_cloudy "\U000F0F31"
 #define ICON_w_pouring "\U000F0596"
 #define ICON_w_rainy "\U000F0597"
 #define ICON_w_snowy "\U000F0F36"
@@ -20,6 +19,7 @@
 #define ICON_w_windy_variant "\U000F059E"
 #define ICON_w_exceptional "\U000F0F38"
 #define ICON_w_partly_cloudy "\U000F0595"
+#define ICON_w_partly_cloudy_night "\U000F0F31"
 #define ICON_w_partly_cloudy_rain "\U000F0F33"
 #define ICON_w_partly_cloudy_light_rain "\U000F0F33"
 #define ICON_w_partlycloudy_light_snow "\U000F0F35"
@@ -45,10 +45,12 @@
 #define ICON_bat_90	"\U000F0082"
 #define ICON_bat_100	"\U000F0079"
 
-std::string conditionToIconBuienRadar(std::string condition)
+std::string conditionToIconBuienRadar(std::string condition, bool daytime)
 {
-  if (condition == "clear") return ICON_w_clear;
-  if (condition == "partlycloudy") return ICON_w_partly_cloudy;
+  if (condition == "clear" && daytime) return ICON_w_clear;
+  if (condition == "clear" && !daytime) return ICON_w_clear_night;
+  if (condition == "partlycloudy" && daytime) return ICON_w_partly_cloudy;
+  if (condition == "partlycloudy" && !daytime) return ICON_w_partly_cloudy_night;
   if (condition == "partlycloudy-rain") return ICON_w_partly_cloudy_rain;
   if (condition == "partlycloudy-fog") return ICON_w_partly_cloudy_fog;
   if (condition == "partlycloudy-light-rain") return ICON_w_partly_cloudy_light_rain;

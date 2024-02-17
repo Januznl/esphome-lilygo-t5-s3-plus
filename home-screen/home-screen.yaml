@@ -74,6 +74,10 @@ time:
       then:
         - pcf8563.write_time
 
+sun: 
+  latitude: !secret sun_lat
+  longitude: !secret sun_long
+
 binary_sensor:
   - platform: gpio
     pin: 
@@ -88,11 +92,13 @@ text_sensor:
     id: br_condition
     entity_id: sensor.detailed_condition
     internal: true
-    # on_value:
-    #   then:    
-    #   - logger.log:
-    #       format: "br_condition value: %s"
-    #       args: [ 'id(br_condition).state.' ]
+    on_value: 
+      then:
+        - script.execute: all_data_received    
+  - platform: homeassistant
+    entity_id: sun.sun
+    id: hasun
+    internal: true
 
     
 sensor:  
@@ -271,7 +277,6 @@ font:
       - "\U000F059E"
       - "\U000F1522"
 
-
 interval:
   - interval: 10s
     then:
@@ -288,10 +293,14 @@ switch:
     id: vk5
     optimistic: true
 
-
+script:
+  - id: all_data_received
+    then:
+      - component.update: t5_display
+      
 display:
 - platform: t547
-  update_interval: 60s
+  update_interval: 300s
   id: t5_display
   lambda: |-
     #define waether_icon_x 900 
@@ -347,7 +356,7 @@ display:
     it.printf(385, it.get_height()/2 + (75 + 35*2),       id(font_icons_text), TextAlign::TOP_LEFT, "\U000F058E"); 
     it.printf(420, it.get_height()/2 + (70 + 35*2), id(font_normal), TextAlign::TOP_LEFT, "%.0f%%", id(overkapping_hum).state); 
 
-    //it.printf(it.get_width()/2+60, it.get_height()/2 + 70, id(font_normal), TextAlign::TOP_LEFT, "weather: %s", id(br_condition).state.c_str()); 
+    //it.printf(it.get_width()/2+60, it.get_height()/2 + 70, id(font_normal), TextAlign::TOP_LEFT, "sun: %s", dayTime ? "up" : "down"); 
 
 
     //it.filled_rectangle(120, 100, it.get_width()-260, 3);
@@ -359,7 +368,8 @@ display:
     //it.printf(550, 110, id(font_title), TextAlign::TOP_LEFT, "%.2f% km/h", id(buienradar_wind_speed).state); 
     
     // Icoon
-    auto weatherIcon = conditionToIconBuienRadar(id(br_condition).state);
+    auto dayTime = id(hasun).state == "above_horizon";
+    auto weatherIcon = conditionToIconBuienRadar(id(br_condition).state, dayTime);
     it.printf(waether_icon_x, waether_icon_y, id(font_wheater_icon_large), TextAlign::BASELINE_RIGHT, weatherIcon.c_str());
 
 
