@@ -45,6 +45,14 @@
 #define ICON_bat_90	"\U000F0082"
 #define ICON_bat_100	"\U000F0079"
 
+// Wifi
+#define ICON_wifi_off "\U000F092D"
+#define ICON_wifi_1 "\U000F091F"
+#define ICON_wifi_2 "\U000F0922"
+#define ICON_wifi_3 "\U000F0925"
+#define ICON_wifi_4 "\U000F0928"
+
+
 std::string conditionToIconBuienRadar(std::string condition, bool daytime)
 {
   if (condition == "clear" && daytime) return ICON_w_clear;
@@ -82,4 +90,13 @@ std::string batteryToIcon(float battery)
   if (battery > 10) return ICON_bat_20;
   if (battery > 0) return ICON_bat_10;
   return ICON_bat_empty;
+}
+
+std::string wifiToIcon(float wifi_signal_strength)
+{
+  if (wifi_signal_strength >= 75) return ICON_wifi_4;
+  if (wifi_signal_strength >= 50) return ICON_wifi_3;
+  if (wifi_signal_strength >= 25) return ICON_wifi_2;
+  if (wifi_signal_strength > 0) return ICON_wifi_1;
+  return ICON_wifi_off;
 }

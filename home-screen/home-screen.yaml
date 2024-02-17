@@ -106,7 +106,23 @@ text_sensor:
 
 
     
-sensor:  
+sensor:
+  - platform: wifi_signal # Reports the WiFi signal strength/RSSI in dB
+    name: "WiFi Signal dB"
+    id: wifi_signal_db
+    update_interval: 60s
+    entity_category: "diagnostic"
+
+  - platform: copy # Reports the WiFi signal strength in %
+    source_id: wifi_signal_db
+    id: wifi_signal_percent
+    name: "WiFi Signal Percent"
+    filters:
+      - lambda: return min(max(2 * (x + 100.0), 0.0), 100.0);
+    unit_of_measurement: "Signal %"
+    entity_category: "diagnostic"
+    device_class: ""
+
   - platform: homeassistant
     entity_id: sensor.woonkamer_temperature
     id: woonkamer_temp
@@ -254,9 +270,9 @@ font:
     glyphs:
       # wifi 
       - "\U000F092D" # wifi off
-      # - "\U000F091F" #  wifi 1
-      # - "\U000F0922" #  wifi 2
-      # - "\U000F0925" #  wifi 3
+      - "\U000F091F" #  wifi 1
+      - "\U000F0922" #  wifi 2
+      - "\U000F0925" #  wifi 3
       - "\U000F0928" #  wifi 4
       # batt
       - "\U000F008E" # mdi-battery-outline
@@ -298,21 +314,7 @@ font:
       - "\U000F059E"
       - "\U000F1522"
 
-interval:
-  - interval: 10s
-    then:
-      - if:
-          condition:
-            wifi.connected:
-          then:
-            - switch.turn_on: vk5
-          else:
-            - switch.turn_off: vk5
-switch:
-  - platform: template
-    name: "Wifi font"
-    id: vk5
-    optimistic: true
+
 
 script:
   - id: all_data_received
@@ -329,7 +331,9 @@ display:
 
     auto battIcon = batteryToIcon(id(battery_percentage).state);
     it.printf(it.get_width()-70, 0, id(font_icons_small), TextAlign::TOP_RIGHT, battIcon.c_str()); 
-    it.printf(it.get_width()-20, 0, id(font_icons_small), TextAlign::TOP_RIGHT, "%s", id(vk5).state ? "\U000F0928" : "\U000F092D");
+
+    auto wifiIcon = wifiToIcon(id(wifi_signal_percent).state);
+    it.printf(it.get_width()-20, 0, id(font_icons_small), TextAlign::TOP_RIGHT, "%s", wifiIcon.c_str());
 
     it.print(10, 10, id(font_title), "Upstairs");
     it.printf(20,  10 + 70, id(font_normal), TextAlign::TOP_LEFT, "Office"); 
