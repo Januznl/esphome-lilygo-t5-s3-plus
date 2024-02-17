@@ -99,6 +99,11 @@ text_sensor:
     entity_id: sun.sun
     id: hasun
     internal: true
+  - platform: homeassistant
+    id: buienradar_wind_direction
+    entity_id: sensor.wind_direction
+    internal: true
+
 
     
 sensor:  
@@ -190,6 +195,12 @@ sensor:
     attribute: humidity
     internal: true
 
+  - platform: homeassistant
+    id: buienradar_rain_24h
+    entity_id: sensor.rain_last_24h
+    internal: true
+
+
   - platform: lilygo_t5_47_battery
     id: battery_voltage
     voltage:
@@ -226,6 +237,16 @@ font:
     glyphs:
       - "\U000F050F" # mdi-thermometer
       - "\U000F058E" # mdi-water-percent
+      - "\U000F059D" # mdi-weather-windy
+
+  - file: "fonts/materialdesignicons-webfont.ttf"
+    id: font_icons_title
+    size: 50
+    glyphs:
+      - "\U000F050F" # mdi-thermometer
+      - "\U000F058E" # mdi-water-percent
+      - "\U000F054B" # mdi-umbrella-outline
+
 
   - file: "fonts/materialdesignicons-webfont.ttf"
     id: font_icons_small
@@ -303,8 +324,8 @@ display:
   update_interval: 300s
   id: t5_display
   lambda: |-
-    #define waether_icon_x 900 
-    #define waether_icon_y 250 
+    #define waether_icon_x 930 
+    #define waether_icon_y 220 
 
     auto battIcon = batteryToIcon(id(battery_percentage).state);
     it.printf(it.get_width()-70, 0, id(font_icons_small), TextAlign::TOP_RIGHT, battIcon.c_str()); 
@@ -363,10 +384,22 @@ display:
 
     // weather screen
     it.filled_rectangle(500, 300, 950, 3);
-    it.printf(520, 50, id(font_title), TextAlign::TOP_LEFT, "%.1f°C", id(buienradar_temp).state); 
-    it.printf(520, 95, id(font_title), TextAlign::TOP_LEFT, "%.0f%%", id(buienradar_hum).state); 
-    //it.printf(550, 110, id(font_title), TextAlign::TOP_LEFT, "%.2f% km/h", id(buienradar_wind_speed).state); 
+
+    // Text
+    it.printf(530, 75, id(font_icons_title), TextAlign::TOP_LEFT, "\U000F050F"); 
+    it.printf(580, 70, id(font_title), TextAlign::TOP_LEFT, "%.1f°C", id(buienradar_temp).state); 
+
+    it.printf(530, 120, id(font_icons_title), TextAlign::TOP_LEFT, "\U000F058E"); 
+    it.printf(580, 115, id(font_title), TextAlign::TOP_LEFT, "%.0f%%", id(buienradar_hum).state); 
+
+    it.printf(530, 165, id(font_icons_title), TextAlign::TOP_LEFT, "\U000F054B"); 
+    it.printf(580, 160, id(font_title), TextAlign::TOP_LEFT, "%.0f% mm", id(buienradar_rain_24h).state); 
+
+    it.printf(540, 240, id(font_icons_text), TextAlign::TOP_LEFT, "\U000F059D"); 
+    it.printf(580, 240, id(font_normal), TextAlign::TOP_LEFT, "%.2f% km/h (%s)", id(buienradar_wind_speed).state, id(buienradar_wind_direction).state.c_str()); 
     
+    
+
     // Icoon
     auto dayTime = id(hasun).state == "above_horizon";
     auto weatherIcon = conditionToIconBuienRadar(id(br_condition).state, dayTime);
