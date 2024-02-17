@@ -189,10 +189,34 @@ sensor:
   - platform: homeassistant
     id: gas_usage
     entity_id: sensor.gas_meter_gas_consumption
-    state_class: total
-    device_class: gas
     internal: true
 
+  - platform: homeassistant
+    id: electricity_meter_energy_consumption_tarif_2
+    entity_id: sensor.electricity_meter_energy_consumption_tarif_2
+    internal: true
+
+  - platform: total_daily_energy
+    name: 'Total Daily gas'
+    id: gas_daily_usage 
+    power_id: gas_usage
+    unit_of_measurement: 'm3'
+    state_class: total_increasing
+    device_class: energy
+    restore: false
+    accuracy_decimals: 3
+
+  - platform: total_daily_energy
+    name: 'Total Daily elect'
+    id: elec_daily_usage 
+    power_id: electricity_meter_energy_consumption_tarif_2
+    unit_of_measurement: 'kwh'
+    state_class: total_increasing
+    device_class: energy
+    restore: false
+    method: trapezoid
+    accuracy_decimals: 3
+    
   - platform: homeassistant
     id: buienradar_wind_speed
     entity_id: weather.buienradar
@@ -372,7 +396,8 @@ display:
     it.printf(385, it.get_height()/2 + (75 + 35*2),       id(font_icons_text), TextAlign::TOP_LEFT, "\U000F058E"); 
     it.printf(420, it.get_height()/2 + (70 + 35*2), id(font_normal), TextAlign::TOP_LEFT, "%.0f%%", id(overkapping_hum).state); 
 
-    //it.printf(it.get_width()/2+60, it.get_height()/2 + 70, id(font_normal), TextAlign::TOP_LEFT, "sun: %s", dayTime ? "up" : "down"); 
+    //debug
+    it.printf(it.get_width()/2+60, it.get_height()/2 + 70, id(font_normal), TextAlign::TOP_LEFT, "elec: %.2f%",  id(elec_daily_usage).state); 
 
 
     //it.filled_rectangle(120, 100, it.get_width()-260, 3);
