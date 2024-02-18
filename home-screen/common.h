@@ -25,7 +25,7 @@
 #define ICON_w_partlycloudy_light_snow "\U000F0F35"
 #define ICON_w_partlycloudy_snow "\U000F0F34"
 #define ICON_w_partlycloudy_lightning "\U000F0F32"
-#define ICON_w_light_rain "\U000F0597"
+#define ICON_w_light_rain "\U000F0596"
 #define ICON_w_partly_cloudy_fog "\U000F0591"
 #define ICON_w_light_snow "\U000F0598"
 #define ICON_w_unknown "\U000F1522"
